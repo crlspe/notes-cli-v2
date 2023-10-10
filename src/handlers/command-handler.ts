@@ -6,8 +6,14 @@ import { CliOutputCommand } from "../commands/output-cli-command";
 import { BaseCommand } from "../commands/base-command";
 import { AddCommand } from "../commands/add-command";
 import { ReplaceCommand } from "../commands/replace-command";
+import { RemoveCommand } from "../commands/remove-command";
+import { UpdateTypeCommand } from "../commands/update-type-command";
+import { UpdateTaskCommand } from "../commands/update-task-command";
 
 export class CommandHandler {
+
+    private inputResults : any;
+    private commandResults : any;
 
     private getInstance(cmd: never) {
         switch (cmd) {
@@ -17,6 +23,18 @@ export class CommandHandler {
                 return new AppendCommand();
             case "replace":
                 return new ReplaceCommand();
+            case "remove":
+                return new RemoveCommand();
+            case "update": 
+                return new UpdateTypeCommand();
+            case "check":
+                return new UpdateTaskCommand(true);
+            case "uncheck":
+                return new UpdateTaskCommand(false);
+            case "toTask":
+                return new UpdateTypeCommand(false);
+            case "toNote":
+                return new UpdateTypeCommand(true);
             default: 
                 return new BaseCommand();
         }
@@ -33,27 +51,55 @@ export class CommandHandler {
         for (const command of this.getCommands(commands)) {
             
             // Inputs
-            let inputResults = (await Promise.all(command.inputs.map((input : any) => (new input.command()).execute(input.options)))).flat();
-            log("CLI Input Results:", inputResults);
+            this.inputResults = (await Promise.all(command.inputs.map((input : any) => (new input.command()).execute(input.options)))).flat();
+            log("CLI Input Results:", this.inputResults);
 
             // Commands 
-            let commandResults = await (new command.command()).execute(inputResults);
-            log("Command Results:", commandResults);
+            this.commandResults = await (new command.command()).execute(this.inputResults);
+            log("Command Results:", this.commandResults);
             
             // Commands Specific Outputs 
             if (command.chains) { 
-                commandResults = (await Promise.all(command.chains.map((output : any) => (new output.command()).execute(commandResults)))).flat();
+                this.commandResults = (await Promise.all(command.chains.map((output : any) => (new output.command()).execute(this.commandResults)))).flat();
             }
             
             // Output
-            await Promise.all(this.getCommands(defaultOutput).map(output => (new output.command()).execute(commandResults)));
+            await Promise.all(this.getCommands(defaultOutput).map(output => (new output.command()).execute(this.commandResults)));
 
             // // Chained commands    
             const chain = [].concat(cli.flags.chain);
-            chain.filter( cmd => cmd !== undefined )
-                .map(cmd => this.getInstance(cmd))
-                .map( async cmd => new CliOutputCommand().execute(await cmd.execute(commandResults)));
+            chain.filter( chainCommand => chainCommand !== undefined )
+                .map(chainCommand => this.getInstance(chainCommand))
+                .map( async chainCommand => new CliOutputCommand().execute(await chainCommand.execute(this.commandResults)));
         }
+    }
+
+    async handleAsChain() {
+        for (const command of this.getCommands(commands)) {
+            
+            // Inputs
+            this.inputResults = (await Promise.all(command.inputs.map((input : any) => (new input.command()).execute(input.options)))).flat();
+            log("CLI Input Results:", this.inputResults);
+
+            // Commands 
+            this.commandResults = await (new command.command()).execute(this.inputResults);
+            log("Command Results:", this.commandResults);
+            
+            // Commands Specific Outputs 
+            if (command.chains) { 
+                this.commandResults = (await Promise.all(command.chains.map((output : any) => (new output.command()).execute(this.commandResults)))).flat();
+            }
+            
+            // Output
+            await Promise.all(this.getCommands(defaultOutput).map(output => (new output.command()).execute(this.commandResults)));
+
+            // // Chained commands    
+            const chain = [].concat(cli.flags.chain);
+            chain.filter( chainCommand => chainCommand !== undefined )
+                .map(chainCommand => this.getInstance(chainCommand))
+                .map( async chainCommand => new CliOutputCommand().execute(await chainCommand.execute(this.commandResults)));
+        }
+
     }
 }
 

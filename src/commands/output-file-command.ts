@@ -18,13 +18,12 @@ export class FileOutputCommand extends BaseCommand {
 
 function format(item:any) { 
     let completed = "";
-    if (item.completed) {
+    if (item.completed !== undefined && item.completed !== null) {
         completed = (item.completed) 
             ? "[x]"
             : "[ ]";
     } 
     let scopes = "";
-    console.log(item.scopes)
     if (item.scopes) {
         scopes = `@(${item.scopes})`
     }

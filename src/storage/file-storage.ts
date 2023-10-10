@@ -45,15 +45,15 @@ export class FileStorage implements BaseStorage {
 		return item;
     }
 
-    async remove(item: Note): Promise<Note> {
-        this.removeById(item.id);
+    removeSync(item: Note): Note|Task {
+        this.removeByIdSync(item.id);
 		return item;
     }
 
-    async removeById(id : number)  {
-        let jsonData = await this.loadSync();
+    removeByIdSync(id : number)  {
+        let jsonData = this.loadSync();
 		delete jsonData.data[id];
-		await this.saveSync(jsonData);
+		this.saveSync(jsonData);
 		return id;
     }
 

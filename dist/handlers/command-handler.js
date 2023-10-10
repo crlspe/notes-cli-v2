@@ -18,6 +18,9 @@ const output_cli_command_1 = require("../commands/output-cli-command");
 const base_command_1 = require("../commands/base-command");
 const add_command_1 = require("../commands/add-command");
 const replace_command_1 = require("../commands/replace-command");
+const remove_command_1 = require("../commands/remove-command");
+const update_type_command_1 = require("../commands/update-type-command");
+const update_task_command_1 = require("../commands/update-task-command");
 class CommandHandler {
     getInstance(cmd) {
         switch (cmd) {
@@ -27,6 +30,18 @@ class CommandHandler {
                 return new append_command_1.AppendCommand();
             case "replace":
                 return new replace_command_1.ReplaceCommand();
+            case "remove":
+                return new remove_command_1.RemoveCommand();
+            case "update":
+                return new update_type_command_1.UpdateTypeCommand();
+            case "check":
+                return new update_task_command_1.UpdateTaskCommand(true);
+            case "uncheck":
+                return new update_task_command_1.UpdateTaskCommand(false);
+            case "toTask":
+                return new update_type_command_1.UpdateTypeCommand(false);
+            case "toNote":
+                return new update_type_command_1.UpdateTypeCommand(true);
             default:
                 return new base_command_1.BaseCommand();
         }
@@ -43,22 +58,45 @@ class CommandHandler {
         return __awaiter(this, void 0, void 0, function* () {
             for (const command of this.getCommands(config_1.commands)) {
                 // Inputs
-                let inputResults = (yield Promise.all(command.inputs.map((input) => (new input.command()).execute(input.options)))).flat();
-                (0, log_1.log)("CLI Input Results:", inputResults);
+                this.inputResults = (yield Promise.all(command.inputs.map((input) => (new input.command()).execute(input.options)))).flat();
+                (0, log_1.log)("CLI Input Results:", this.inputResults);
                 // Commands 
-                let commandResults = yield (new command.command()).execute(inputResults);
-                (0, log_1.log)("Command Results:", commandResults);
+                this.commandResults = yield (new command.command()).execute(this.inputResults);
+                (0, log_1.log)("Command Results:", this.commandResults);
                 // Commands Specific Outputs 
                 if (command.chains) {
-                    commandResults = (yield Promise.all(command.chains.map((output) => (new output.command()).execute(commandResults)))).flat();
+                    this.commandResults = (yield Promise.all(command.chains.map((output) => (new output.command()).execute(this.commandResults)))).flat();
                 }
                 // Output
-                yield Promise.all(this.getCommands(config_1.defaultOutput).map(output => (new output.command()).execute(commandResults)));
+                yield Promise.all(this.getCommands(config_1.defaultOutput).map(output => (new output.command()).execute(this.commandResults)));
                 // // Chained commands    
                 const chain = [].concat(cli_1.cli.flags.chain);
-                chain.filter(cmd => cmd !== undefined)
-                    .map(cmd => this.getInstance(cmd))
-                    .map((cmd) => __awaiter(this, void 0, void 0, function* () { return new output_cli_command_1.CliOutputCommand().execute(yield cmd.execute(commandResults)); }));
+                chain.filter(chainCommand => chainCommand !== undefined)
+                    .map(chainCommand => this.getInstance(chainCommand))
+                    .map((chainCommand) => __awaiter(this, void 0, void 0, function* () { return new output_cli_command_1.CliOutputCommand().execute(yield chainCommand.execute(this.commandResults)); }));
+            }
+        });
+    }
+    handleAsChain() {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const command of this.getCommands(config_1.commands)) {
+                // Inputs
+                this.inputResults = (yield Promise.all(command.inputs.map((input) => (new input.command()).execute(input.options)))).flat();
+                (0, log_1.log)("CLI Input Results:", this.inputResults);
+                // Commands 
+                this.commandResults = yield (new command.command()).execute(this.inputResults);
+                (0, log_1.log)("Command Results:", this.commandResults);
+                // Commands Specific Outputs 
+                if (command.chains) {
+                    this.commandResults = (yield Promise.all(command.chains.map((output) => (new output.command()).execute(this.commandResults)))).flat();
+                }
+                // Output
+                yield Promise.all(this.getCommands(config_1.defaultOutput).map(output => (new output.command()).execute(this.commandResults)));
+                // // Chained commands    
+                const chain = [].concat(cli_1.cli.flags.chain);
+                chain.filter(chainCommand => chainCommand !== undefined)
+                    .map(chainCommand => this.getInstance(chainCommand))
+                    .map((chainCommand) => __awaiter(this, void 0, void 0, function* () { return new output_cli_command_1.CliOutputCommand().execute(yield chainCommand.execute(this.commandResults)); }));
             }
         });
     }

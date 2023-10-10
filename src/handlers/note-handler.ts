@@ -18,16 +18,12 @@ export class NoteHandler {
         return items.map(item => this._storage.updateSync(item));
     }
 
-    async remove(...items : Array<Note|Task>) : Promise<Array<Note|Task>> {
-		return await Promise.all(
-            items.map(item => this._storage.remove(item))
-        );
+    remove(...items : Array<Note|Task>) : Array<Note|Task> {
+		return items.map(item => this._storage.removeSync(item));
 	}
 
-    async removeById(...ids : Array<number>) : Promise<Array<number>> {
-        return await Promise.all(
-            ids.map(id => this._storage.removeById(id))
-        );
+    removeById(...ids : Array<number>) : Array<number> {
+        return ids.map(id => this._storage.removeByIdSync(id));
     }
 
     searchById(...ids : Array<number>) {

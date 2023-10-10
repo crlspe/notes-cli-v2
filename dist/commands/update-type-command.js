@@ -14,6 +14,10 @@ const cli_1 = require("../utils/cli");
 const base_command_1 = require("./base-command");
 const factory_1 = require("../models/factory");
 class UpdateTypeCommand extends base_command_1.BaseCommand {
+    constructor(toTask = false) {
+        super();
+        this._toTask = !!cli_1.cli.flags.task || toTask;
+    }
     execute(items) {
         const _super = Object.create(null, {
             execute: { get: () => super.execute }
@@ -21,7 +25,7 @@ class UpdateTypeCommand extends base_command_1.BaseCommand {
         return __awaiter(this, void 0, void 0, function* () {
             this._results = items
                 .map(item => {
-                item.type = (!!cli_1.cli.flags.task) ? 'task' : 'note';
+                item.type = (this._toTask) ? 'task' : 'note';
                 return factory_1.Factory.fromJSON(item.getJSON());
             });
             yield this._noteHandler.update(...this._results);

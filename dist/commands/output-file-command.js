@@ -23,7 +23,7 @@ class FileOutputCommand extends base_command_1.BaseCommand {
         return __awaiter(this, void 0, void 0, function* () {
             this._results = items
                 .map(item => item.formatedJSON(TRUNCATE_AT))
-                .map(item => ``);
+                .map(item => format(item));
             const fileName = (cli_1.cli.flags.fileName) ? cli_1.cli.flags.fileName : `${Date.now().toString()}`;
             (0, fs_1.writeFileSync)(`./${fileName}${EXT}`, this._results.join('\n'));
             return _super.execute.call(this, items);
@@ -39,6 +39,7 @@ function format(item) {
             : "[ ]";
     }
     let scopes = "";
+    console.log(item.scopes);
     if (item.scopes) {
         scopes = `@(${item.scopes})`;
     }

@@ -8,8 +8,8 @@ export interface BaseStorage {
     addSync(item : Note|Task) : Note|Task;
 
     updateSync(item : Note|Task) : Note|Task;
-    remove(item : Note|Task) : Promise<Note|Task>;
-    removeById(id : number) : Promise<number>;
+    removeSync(item : Note|Task) : Note|Task;
+    removeByIdSync(id : number) : number;
 
     getAll() : Array<Note|Task>;
     getByIdSync(id : number) : Note|Task|undefined;

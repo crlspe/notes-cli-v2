@@ -4,9 +4,9 @@ import { BaseCommand } from "./base-command";
 
 export class CliOutputCommand extends BaseCommand {
     async execute(items: Array<Note|Task>): Promise<any[]> {
-
-        
-        console.table(items.map(item => item.formatedJSON()));
+        if (items.length > 0) 
+            console.table(items.map(item => item.formatedJSON()));
+        console.log(`(${items.length}) items...`)
         return super.execute(items);
     }
 }

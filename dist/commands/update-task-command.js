@@ -13,6 +13,11 @@ exports.UpdateTaskCommand = void 0;
 const cli_1 = require("../utils/cli");
 const base_command_1 = require("./base-command");
 class UpdateTaskCommand extends base_command_1.BaseCommand {
+    constructor(completed = false) {
+        super();
+        this._completed = cli_1.cli.flags.check;
+        this._completed = this._completed || completed;
+    }
     execute(items) {
         const _super = Object.create(null, {
             execute: { get: () => super.execute }
@@ -20,7 +25,7 @@ class UpdateTaskCommand extends base_command_1.BaseCommand {
         return __awaiter(this, void 0, void 0, function* () {
             this._results = items
                 .filter(item => item.type === "task")
-                .map(task => task.setCompleted(cli_1.cli.flags.check));
+                .map(task => task.setCompleted(this._completed));
             yield this._noteHandler.update(...this._results);
             return yield _super.execute.call(this, items);
         });

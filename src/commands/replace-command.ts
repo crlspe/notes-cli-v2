@@ -6,7 +6,7 @@ import { BaseCommand } from "./base-command";
 export class ReplaceCommand extends BaseCommand{
 
     async execute(items : Array<Note>): Promise<Array<Note|Task>> {
-        if (items) {
+        if (items.length) {
             const replace : string = await CliInput.ask("replace: ");
             let [ value, replaceValue ] = replace.split("|");
             const updatedItems = items.map(item => {

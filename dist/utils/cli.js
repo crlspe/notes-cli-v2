@@ -67,9 +67,6 @@ const options = {
         alias: `u`,
         desc: "Change Item Type"
     },
-    content: { boolean: true, alias: `$`, desc: `Search in content` },
-    scope: { boolean: true, alias: `@`, desc: `Search in scope` },
-    tag: { boolean: true, alias: `#`, desc: `Search in tag` },
     check: {
         boolean: true,
         alias: `X`,
@@ -82,7 +79,7 @@ const options = {
     },
     chain: {
         boolean: false,
-        choices: ["append", "add", "replace"],
+        choices: ["append", "add", "replace", "remove", "toTask", "toNote", "update", "check", "uncheck"],
         alias: `h`,
         desc: "Chain to a Command"
     },
