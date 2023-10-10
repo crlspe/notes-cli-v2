@@ -1,5 +1,6 @@
 # notes-cli-v2
-Create and Manage Notes and Tasks 
+Create and Manage Notes and Tasks
+
 Options:
       --help       Show help                                           [boolean]
       --version    Show version number                                 [boolean]
