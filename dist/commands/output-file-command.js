@@ -32,19 +32,15 @@ class FileOutputCommand extends base_command_1.BaseCommand {
 }
 exports.FileOutputCommand = FileOutputCommand;
 function format(item) {
-    let completed = "";
-    if (item.completed !== undefined && item.completed !== null) {
-        completed = (item.completed)
-            ? "[x]"
-            : "[ ]";
-    }
-    let scopes = "";
-    if (item.scopes) {
-        scopes = `@(${item.scopes})`;
-    }
-    let tags = "";
-    if (item.tags) {
-        tags = `#(${item.tags})`;
-    }
-    return `- ${completed}\t${item.content}\t${item.created}\t${scopes}\t${tags}`;
+    const completedStr = item.completed ? "[x]" : "[ ]";
+    const scopesStr = item.scopes ? `@(${item.scopes})` : "";
+    const tagsStr = item.tags ? `#(${item.tags})` : "";
+    let line = [
+        completedStr,
+        item.content,
+        item.created,
+        scopesStr,
+        tagsStr
+    ];
+    return `- ${line.join('\t')}`;
 }
