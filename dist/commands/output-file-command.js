@@ -33,13 +33,12 @@ class FileOutputCommand extends base_command_1.BaseCommand {
 exports.FileOutputCommand = FileOutputCommand;
 function format(item) {
     let completed = "";
-    if (item.completed) {
+    if (item.completed !== undefined && item.completed !== null) {
         completed = (item.completed)
             ? "[x]"
             : "[ ]";
     }
     let scopes = "";
-    console.log(item.scopes);
     if (item.scopes) {
         scopes = `@(${item.scopes})`;
     }

@@ -17,7 +17,9 @@ class CliOutputCommand extends base_command_1.BaseCommand {
             execute: { get: () => super.execute }
         });
         return __awaiter(this, void 0, void 0, function* () {
-            console.table(items.map(item => item.formatedJSON()));
+            if (items.length > 0)
+                console.table(items.map(item => item.formatedJSON()));
+            console.log(`(${items.length}) items...`);
             return _super.execute.call(this, items);
         });
     }

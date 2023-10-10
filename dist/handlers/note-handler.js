@@ -25,14 +25,10 @@ class NoteHandler {
         });
     }
     remove(...items) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield Promise.all(items.map(item => this._storage.remove(item)));
-        });
+        return items.map(item => this._storage.removeSync(item));
     }
     removeById(...ids) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield Promise.all(ids.map(id => this._storage.removeById(id)));
-        });
+        return ids.map(id => this._storage.removeByIdSync(id));
     }
     searchById(...ids) {
         return ids.map(id => this._storage.getByIdSync(id))

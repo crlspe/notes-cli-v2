@@ -17,6 +17,7 @@ class RemoveCommand extends base_command_1.BaseCommand {
             execute: { get: () => super.execute }
         });
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("chained:", items);
             if (items) {
                 this._results = yield this._noteHandler.remove(...items);
             }

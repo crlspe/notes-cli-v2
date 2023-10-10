@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileStorage = void 0;
 const os = require("os");
@@ -47,19 +38,15 @@ class FileStorage {
         this.saveSync(jsonData);
         return item;
     }
-    remove(item) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.removeById(item.id);
-            return item;
-        });
+    removeSync(item) {
+        this.removeByIdSync(item.id);
+        return item;
     }
-    removeById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let jsonData = yield this.loadSync();
-            delete jsonData.data[id];
-            yield this.saveSync(jsonData);
-            return id;
-        });
+    removeByIdSync(id) {
+        let jsonData = this.loadSync();
+        delete jsonData.data[id];
+        this.saveSync(jsonData);
+        return id;
     }
     getAll() {
         let jsonData = this.loadSync().data;

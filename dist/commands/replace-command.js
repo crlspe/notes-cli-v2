@@ -18,7 +18,7 @@ class ReplaceCommand extends base_command_1.BaseCommand {
             execute: { get: () => super.execute }
         });
         return __awaiter(this, void 0, void 0, function* () {
-            if (items) {
+            if (items.length) {
                 const replace = yield input_1.CliInput.ask("replace: ");
                 let [value, replaceValue] = replace.split("|");
                 const updatedItems = items.map(item => {
