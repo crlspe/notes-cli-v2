@@ -39,9 +39,9 @@ class CommandHandler {
             case "uncheck":
                 return new update_task_command_1.UpdateTaskCommand(false);
             case "toTask":
-                return new update_type_command_1.UpdateTypeCommand(false);
-            case "toNote":
                 return new update_type_command_1.UpdateTypeCommand(true);
+            case "toNote":
+                return new update_type_command_1.UpdateTypeCommand(false);
             default:
                 return new base_command_1.BaseCommand();
         }

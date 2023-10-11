@@ -32,9 +32,9 @@ export class CommandHandler {
             case "uncheck":
                 return new UpdateTaskCommand(false);
             case "toTask":
-                return new UpdateTypeCommand(false);
-            case "toNote":
                 return new UpdateTypeCommand(true);
+            case "toNote":
+                return new UpdateTypeCommand(false);
             default: 
                 return new BaseCommand();
         }
