@@ -9,5 +9,5 @@ import { log } from './utils/log';
     init();
     log("CLI Flags:", cli.flags, "CLI Input:", cli.input);
     const commandHandler = new CommandHandler();
-    commandHandler.handle();
+    await commandHandler.handleAsChain();
 })();

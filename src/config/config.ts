@@ -33,7 +33,8 @@ const commands = [
                             index: 0,
                             isNew: true
                         }
-                    }]
+                    }],
+        chains: []
     },
 
     {

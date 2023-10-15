@@ -1,4 +1,3 @@
-import { BaseCommand } from "../commands/base-command";
 import { Note } from "../models/note";
 import { Task } from "../models/task";
 
@@ -9,19 +8,18 @@ class HandlerNotFoundError extends Error {
     }
 }
 
-export abstract class BaseCommandHandler {
-    protected _next: BaseCommandHandler | null = null;
+export abstract class ChainHandler {
+    private _next: ChainHandler | null = null;
 
-    async handle(command: BaseCommand, input : any): Promise<(Note | Task)[]> {
+    async handle(input : any): Promise<(Note|Task)[]> {
         if (this._next) {
-            return await this._next.handle(command,input);
-        } else {
-            throw new HandlerNotFoundError("Handler Not Found");
-        }
+            return await this._next.handle(input);
+        } 
+        return input;
     }
 
-    setNext(commandHandler: BaseCommandHandler): BaseCommandHandler {
+    setNext(commandHandler: ChainHandler): ChainHandler {
         this._next = commandHandler;
-        return this;
+        return this._next;
     }
 }
