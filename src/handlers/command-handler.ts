@@ -73,34 +73,4 @@ export class CommandHandler {
                 .map( async chainCommand => new CliOutputCommand().execute(await chainCommand.execute(this.commandResults)));
         }
     }
-
-    async handleAsChain() {
-        for (const command of this.getCommands(commands)) {
-            
-            // Inputs
-            this.inputResults = (await Promise.all(command.inputs.map((input : any) => (new input.command()).execute(input.options)))).flat();
-            log("CLI Input Results:", this.inputResults);
-
-            // Commands 
-            this.commandResults = await (new command.command()).execute(this.inputResults);
-            log("Command Results:", this.commandResults);
-            
-            // Commands Specific Outputs 
-            if (command.chains) { 
-                this.commandResults = (await Promise.all(command.chains.map((output : any) => (new output.command()).execute(this.commandResults)))).flat();
-            }
-            
-            // Output
-            await Promise.all(this.getCommands(defaultOutput).map(output => (new output.command()).execute(this.commandResults)));
-
-            // // Chained commands    
-            const chain = [].concat(cli.flags.chain);
-            chain.filter( chainCommand => chainCommand !== undefined )
-                .map(chainCommand => this.getInstance(chainCommand))
-                .map( async chainCommand => new CliOutputCommand().execute(await chainCommand.execute(this.commandResults)));
-        }
-
-    }
 }
-
-
